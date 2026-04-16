@@ -1,1 +1,924 @@
-ok
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Portafolio — Analista de Datos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+  /* ── Reset & Variables ─────────────────────────────────────────── */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0a0a0f;
+    --surface: #12121a;
+    --surface2: #1a1a26;
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,255,255,0.18);
+    --accent: #5b8dee;
+    --accent2: #a78bfa;
+    --text: #e8e8f0;
+    --muted: #7a7a96;
+    --serif: 'DM Serif Display', Georgia, serif;
+    --sans: 'DM Sans', sans-serif;
+    --mono: 'DM Mono', monospace;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-weight: 300;
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── Noise grain overlay ───────────────────────────────────────── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.4;
+  }
+
+  /* ── Navigation ────────────────────────────────────────────────── */
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem 3rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(10,10,15,0.85);
+    backdrop-filter: blur(12px);
+  }
+
+  .nav-logo {
+    font-family: var(--serif);
+    font-size: 1.1rem;
+    letter-spacing: 0.01em;
+    color: var(--text);
+    text-decoration: none;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-decoration: none;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    transition: color 0.2s;
+  }
+
+  .nav-links a:hover { color: var(--text); }
+
+  /* ── Hero ──────────────────────────────────────────────────────── */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 8rem 3rem 5rem;
+    position: relative;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-tag {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+    opacity: 0;
+    animation: fadeUp 0.8s 0.2s forwards;
+  }
+
+  .hero h1 {
+    font-family: var(--serif);
+    font-size: clamp(3rem, 7vw, 6.5rem);
+    line-height: 1.05;
+    letter-spacing: -0.01em;
+    max-width: 900px;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.35s forwards;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--accent2);
+  }
+
+  .hero-sub {
+    margin-top: 2rem;
+    max-width: 520px;
+    color: var(--muted);
+    font-size: 1rem;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.5s forwards;
+  }
+
+  .hero-actions {
+    margin-top: 2.5rem;
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.9s 0.65s forwards;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.75rem;
+    border-radius: 2px;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    text-decoration: none;
+    transition: all 0.2s;
+    cursor: pointer;
+    border: none;
+  }
+
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+  }
+
+  .btn-primary:hover { background: #3d72d9; transform: translateY(-1px); }
+
+  .btn-outline {
+    background: transparent;
+    color: var(--text);
+    border: 1px solid var(--border-hover);
+  }
+
+  .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+
+  .hero-scroll {
+    position: absolute;
+    bottom: 2.5rem;
+    right: 3rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    writing-mode: vertical-rl;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+
+  .hero-scroll::before {
+    content: '';
+    display: block;
+    width: 1px;
+    height: 48px;
+    background: linear-gradient(to bottom, transparent, var(--muted));
+  }
+
+  /* ── Stats bar ─────────────────────────────────────────────────── */
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    border-bottom: 1px solid var(--border);
+  }
+
+  .stat {
+    padding: 2.5rem 3rem;
+    border-right: 1px solid var(--border);
+    opacity: 0;
+    animation: fadeUp 0.7s forwards;
+  }
+
+  .stat:last-child { border-right: none; }
+  .stat:nth-child(1) { animation-delay: 0.1s; }
+  .stat:nth-child(2) { animation-delay: 0.2s; }
+  .stat:nth-child(3) { animation-delay: 0.3s; }
+  .stat:nth-child(4) { animation-delay: 0.4s; }
+
+  .stat-num {
+    font-family: var(--serif);
+    font-size: 2.8rem;
+    line-height: 1;
+    color: var(--text);
+    margin-bottom: 0.35rem;
+  }
+
+  .stat-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  /* ── Section commons ───────────────────────────────────────────── */
+  section { position: relative; z-index: 1; }
+
+  .section-header {
+    padding: 5rem 3rem 3rem;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border);
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 0.75rem;
+  }
+
+  .section-title {
+    font-family: var(--serif);
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    line-height: 1.1;
+  }
+
+  .section-title em { font-style: italic; color: var(--accent2); }
+
+  .section-desc {
+    max-width: 380px;
+    color: var(--muted);
+    font-size: 0.9rem;
+    text-align: right;
+  }
+
+  /* ── Project cards ─────────────────────────────────────────────── */
+  .projects-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .project-card {
+    border-bottom: 1px solid var(--border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    min-height: 520px;
+    transition: background 0.3s;
+  }
+
+  .project-card:hover { background: var(--surface); }
+  .project-card:nth-child(even) { direction: rtl; }
+  .project-card:nth-child(even) > * { direction: ltr; }
+
+  .project-info {
+    padding: 3.5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border-right: 1px solid var(--border);
+  }
+
+  .project-card:nth-child(even) .project-info {
+    border-right: none;
+    border-left: 1px solid var(--border);
+  }
+
+  .project-num {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--muted);
+    margin-bottom: 2rem;
+  }
+
+  .project-title {
+    font-family: var(--serif);
+    font-size: clamp(1.5rem, 2.5vw, 2.2rem);
+    line-height: 1.15;
+    margin-bottom: 1rem;
+  }
+
+  .project-desc {
+    color: var(--muted);
+    font-size: 0.9rem;
+    line-height: 1.7;
+    margin-bottom: 1.5rem;
+    flex: 1;
+  }
+
+  .project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 2rem;
+  }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.3rem 0.75rem;
+    border: 1px solid var(--border-hover);
+    border-radius: 1px;
+    color: var(--muted);
+  }
+
+  .project-links {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+
+  /* ── Dashboard embed ───────────────────────────────────────────── */
+  .project-embed {
+    position: relative;
+    background: var(--surface2);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .embed-placeholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 1rem;
+    padding: 2rem;
+    text-align: center;
+  }
+
+  .embed-icon {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, var(--accent), var(--accent2));
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+  }
+
+  .embed-label {
+    font-family: var(--mono);
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .embed-url {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--accent);
+    background: rgba(91,141,238,0.1);
+    padding: 0.5rem 1rem;
+    border-radius: 2px;
+    border: 1px solid rgba(91,141,238,0.2);
+    max-width: 320px;
+    word-break: break-all;
+  }
+
+  .embed-hint {
+    font-size: 0.8rem;
+    color: var(--muted);
+    max-width: 280px;
+  }
+
+  /* Iframe real (activo cuando se pega el link) */
+  .project-embed iframe {
+    width: 100%;
+    height: 100%;
+    border: none;
+    position: absolute;
+    inset: 0;
+  }
+
+  /* ── Skills section ────────────────────────────────────────────── */
+  .skills-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    border-top: 1px solid var(--border);
+  }
+
+  .skill-group {
+    padding: 3rem;
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .skill-group:last-child { border-right: none; }
+
+  .skill-group-title {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 1.5rem;
+  }
+
+  .skill-list {
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .skill-list li {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-size: 0.9rem;
+    color: var(--text);
+  }
+
+  .skill-list li::before {
+    content: '';
+    width: 4px;
+    height: 4px;
+    border-radius: 50%;
+    background: var(--accent2);
+    flex-shrink: 0;
+  }
+
+  /* ── About section ─────────────────────────────────────────────── */
+  .about-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-top: 1px solid var(--border);
+  }
+
+  .about-text {
+    padding: 5rem 3rem;
+    border-right: 1px solid var(--border);
+  }
+
+  .about-text p {
+    color: var(--muted);
+    font-size: 1rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+  }
+
+  .about-text p:last-child { margin-bottom: 0; }
+
+  .about-details {
+    padding: 5rem 3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+  }
+
+  .detail-row {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .detail-row:last-child { border-bottom: none; }
+
+  .detail-label {
+    font-family: var(--mono);
+    font-size: 0.65rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .detail-val {
+    font-size: 0.95rem;
+    color: var(--text);
+  }
+
+  .detail-val a {
+    color: var(--accent);
+    text-decoration: none;
+  }
+
+  .detail-val a:hover { text-decoration: underline; }
+
+  /* ── Contact ───────────────────────────────────────────────────── */
+  .contact {
+    padding: 6rem 3rem;
+    border-top: 1px solid var(--border);
+    text-align: center;
+  }
+
+  .contact h2 {
+    font-family: var(--serif);
+    font-size: clamp(2.5rem, 5vw, 4.5rem);
+    margin-bottom: 1.5rem;
+  }
+
+  .contact h2 em { font-style: italic; color: var(--accent2); }
+
+  .contact p {
+    color: var(--muted);
+    max-width: 440px;
+    margin: 0 auto 2.5rem;
+    font-size: 0.95rem;
+  }
+
+  /* ── Footer ────────────────────────────────────────────────────── */
+  footer {
+    padding: 2rem 3rem;
+    border-top: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+
+  footer p {
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    letter-spacing: 0.08em;
+    color: var(--muted);
+  }
+
+  /* ── Animation ─────────────────────────────────────────────────── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s ease, transform 0.7s ease;
+  }
+
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  /* ── Responsive ────────────────────────────────────────────────── */
+  @media (max-width: 800px) {
+    nav { padding: 1rem 1.5rem; }
+    .nav-links { gap: 1.2rem; }
+    .hero, .section-header, .contact { padding-left: 1.5rem; padding-right: 1.5rem; }
+
+    .project-card {
+      grid-template-columns: 1fr;
+      min-height: auto;
+      direction: ltr !important;
+    }
+
+    .project-info {
+      border-right: none !important;
+      border-left: none !important;
+      border-bottom: 1px solid var(--border);
+      padding: 2.5rem 1.5rem;
+    }
+
+    .project-embed { min-height: 300px; }
+    .about-grid { grid-template-columns: 1fr; }
+    .about-text { border-right: none; padding: 3rem 1.5rem; }
+    .about-details { padding: 3rem 1.5rem; }
+    .stat { padding: 2rem 1.5rem; }
+    .skill-group { padding: 2rem 1.5rem; }
+    footer { padding: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Navigation ───────────────────────────────────────────────── -->
+<nav>
+  <!-- ✏️ CAMBIA: tu nombre o iniciales -->
+  <a href="#" class="nav-logo">Tu Nombre</a>
+  <ul class="nav-links">
+    <li><a href="#proyectos">Proyectos</a></li>
+    <li><a href="#habilidades">Habilidades</a></li>
+    <li><a href="#sobre-mi">Sobre mí</a></li>
+    <li><a href="#contacto">Contacto</a></li>
+  </ul>
+</nav>
+
+<!-- ── Hero ─────────────────────────────────────────────────────── -->
+<section class="hero">
+  <p class="hero-tag">Analista de Datos · Power BI · Guatemala</p>
+  <h1>Datos que<br/><em>cuentan historias</em><br/>y generan decisiones.</h1>
+  <!-- ✏️ CAMBIA: tu descripción personal -->
+  <p class="hero-sub">
+    Transformo datos complejos en dashboards claros y accionables.
+    Especializado en Power BI, modelado de datos y análisis de negocio.
+  </p>
+  <div class="hero-actions">
+    <a href="#proyectos" class="btn btn-primary">Ver proyectos</a>
+    <!-- ✏️ CAMBIA: link a tu CV -->
+    <a href="cv.pdf" class="btn btn-outline" target="_blank">Descargar CV</a>
+  </div>
+  <div class="hero-scroll">Scroll</div>
+</section>
+
+<!-- ── Stats ─────────────────────────────────────────────────────── -->
+<div class="stats">
+  <!-- ✏️ CAMBIA: tus cifras reales -->
+  <div class="stat">
+    <div class="stat-num">5+</div>
+    <div class="stat-label">Proyectos completados</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">3</div>
+    <div class="stat-label">Sectores analizados</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">DAX</div>
+    <div class="stat-label">Lenguaje principal</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">100%</div>
+    <div class="stat-label">Dashboards interactivos</div>
+  </div>
+</div>
+
+<!-- ── Proyectos ─────────────────────────────────────────────────── -->
+<section id="proyectos">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-label">Portafolio</p>
+      <h2 class="section-title">Proyectos <em>seleccionados</em></h2>
+    </div>
+    <p class="section-desc">Cada dashboard resuelve un problema de negocio real con datos reales.</p>
+  </div>
+
+  <div class="projects-grid">
+
+    <!-- ══ Proyecto 1 ══════════════════════════════════════════════ -->
+    <div class="project-card reveal">
+      <div class="project-info">
+        <div>
+          <p class="project-num">01 / Ventas</p>
+          <!-- ✏️ CAMBIA: título del proyecto -->
+          <h3 class="project-title">Dashboard de Ventas & Tendencias Retail</h3>
+          <!-- ✏️ CAMBIA: descripción del proyecto -->
+          <p class="project-desc">
+            Análisis de rendimiento de ventas con comparativa vs. año anterior,
+            top productos por región y detección de estacionalidad. Permite al
+            equipo comercial identificar oportunidades en segundos.
+          </p>
+          <div class="project-tags">
+            <span class="tag">Power BI</span>
+            <span class="tag">DAX</span>
+            <span class="tag">Inteligencia de tiempo</span>
+            <span class="tag">Kaggle Dataset</span>
+          </div>
+        </div>
+        <div class="project-links">
+          <!-- ✏️ CAMBIA: tu link de Power BI (Publicar en web) -->
+          <a href="https://app.powerbi.com/view?r=TU_LINK_AQUI" target="_blank" class="btn btn-primary">Ver dashboard</a>
+          <a href="https://github.com/tu-usuario/proyecto-1" target="_blank" class="btn btn-outline">GitHub</a>
+        </div>
+      </div>
+      <div class="project-embed">
+        <!--
+          ✏️ INSTRUCCIONES:
+          1. En Power BI Service: Archivo → Insertar → Publicar en web
+          2. Copia el src del iframe que te da Power BI
+          3. Reemplaza el src de abajo con tu link real
+          4. Borra el div.embed-placeholder
+        -->
+        <div class="embed-placeholder">
+          <div class="embed-icon">📊</div>
+          <p class="embed-label">Dashboard Power BI</p>
+          <div class="embed-url">Pega aquí tu src de iframe</div>
+          <p class="embed-hint">Obtén el link en: Archivo → Insertar → Publicar en web</p>
+        </div>
+        <!-- <iframe src="https://app.powerbi.com/reportEmbed?reportId=TU_ID&..." allowFullScreen></iframe> -->
+      </div>
+    </div>
+
+    <!-- ══ Proyecto 2 ══════════════════════════════════════════════ -->
+    <div class="project-card reveal">
+      <div class="project-info">
+        <div>
+          <p class="project-num">02 / RRHH</p>
+          <!-- ✏️ CAMBIA -->
+          <h3 class="project-title">HR Analytics — Retención & Rotación</h3>
+          <p class="project-desc">
+            Visualización de métricas de RRHH: tasa de rotación por departamento,
+            perfil de empleados que renuncian, ausentismo y distribución salarial.
+            Basado en el dataset IBM HR Analytics de Kaggle.
+          </p>
+          <div class="project-tags">
+            <span class="tag">Power BI</span>
+            <span class="tag">Power Query</span>
+            <span class="tag">IBM Dataset</span>
+            <span class="tag">Análisis predictivo</span>
+          </div>
+        </div>
+        <div class="project-links">
+          <a href="https://app.powerbi.com/view?r=TU_LINK_AQUI" target="_blank" class="btn btn-primary">Ver dashboard</a>
+          <a href="https://github.com/tu-usuario/proyecto-2" target="_blank" class="btn btn-outline">GitHub</a>
+        </div>
+      </div>
+      <div class="project-embed">
+        <div class="embed-placeholder">
+          <div class="embed-icon">👥</div>
+          <p class="embed-label">Dashboard Power BI</p>
+          <div class="embed-url">Pega aquí tu src de iframe</div>
+          <p class="embed-hint">Obtén el link en: Archivo → Insertar → Publicar en web</p>
+        </div>
+        <!-- <iframe src="TU_SRC_AQUI" allowFullScreen></iframe> -->
+      </div>
+    </div>
+
+    <!-- ══ Proyecto 3 ══════════════════════════════════════════════ -->
+    <div class="project-card reveal">
+      <div class="project-info">
+        <div>
+          <p class="project-num">03 / Finanzas</p>
+          <h3 class="project-title">Reporte Financiero Ejecutivo</h3>
+          <p class="project-desc">
+            Dashboard de P&L con márgenes, EBITDA y análisis de cashflow mensual.
+            Diseñado para alta dirección con navegación por períodos y
+            desglose por unidad de negocio.
+          </p>
+          <div class="project-tags">
+            <span class="tag">Power BI</span>
+            <span class="tag">DAX avanzado</span>
+            <span class="tag">Finanzas</span>
+            <span class="tag">Drill-through</span>
+          </div>
+        </div>
+        <div class="project-links">
+          <a href="https://app.powerbi.com/view?r=TU_LINK_AQUI" target="_blank" class="btn btn-primary">Ver dashboard</a>
+          <a href="https://github.com/tu-usuario/proyecto-3" target="_blank" class="btn btn-outline">GitHub</a>
+        </div>
+      </div>
+      <div class="project-embed">
+        <div class="embed-placeholder">
+          <div class="embed-icon">💹</div>
+          <p class="embed-label">Dashboard Power BI</p>
+          <div class="embed-url">Pega aquí tu src de iframe</div>
+          <p class="embed-hint">Obtén el link en: Archivo → Insertar → Publicar en web</p>
+        </div>
+        <!-- <iframe src="TU_SRC_AQUI" allowFullScreen></iframe> -->
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ── Habilidades ────────────────────────────────────────────────── -->
+<section id="habilidades">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-label">Stack técnico</p>
+      <h2 class="section-title">Herramientas &<br/><em>habilidades</em></h2>
+    </div>
+  </div>
+  <div class="skills-grid">
+    <div class="skill-group reveal">
+      <p class="skill-group-title">Visualización</p>
+      <ul class="skill-list">
+        <li>Power BI Desktop & Service</li>
+        <li>DAX (medidas, KPIs, inteligencia de tiempo)</li>
+        <li>Power Query / M Language</li>
+        <li>Modelado de datos en estrella</li>
+        <li>ZoomCharts, Deneb, visuals personalizados</li>
+      </ul>
+    </div>
+    <div class="skill-group reveal">
+      <p class="skill-group-title">Datos & Bases de datos</p>
+      <ul class="skill-list">
+        <li>SQL (consultas, joins, subconsultas)</li>
+        <li>Excel avanzado (Power Pivot, tablas dinámicas)</li>
+        <li>Python (pandas, matplotlib) — básico</li>
+        <li>Limpieza y transformación de datos</li>
+        <li>Kaggle, datos abiertos, APIs REST</li>
+      </ul>
+    </div>
+    <div class="skill-group reveal">
+      <p class="skill-group-title">Análisis & Negocio</p>
+      <ul class="skill-list">
+        <li>Análisis de ventas y tendencias</li>
+        <li>Métricas financieras (P&L, EBITDA, KPIs)</li>
+        <li>HR Analytics y retención</li>
+        <li>Storytelling con datos</li>
+        <li>Diseño de dashboards ejecutivos</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ── Sobre mí ───────────────────────────────────────────────────── -->
+<section id="sobre-mi">
+  <div class="section-header reveal">
+    <div>
+      <p class="section-label">Sobre mí</p>
+      <h2 class="section-title">Quién está<br/><em>detrás</em> de los datos</h2>
+    </div>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <!-- ✏️ CAMBIA: tu historia personal -->
+      <p>
+        Soy analista de datos con pasión por convertir números en narrativas
+        claras que impulsan decisiones estratégicas. Me especializo en Power BI,
+        donde combino modelado de datos sólido con diseño visual cuidadoso.
+      </p>
+      <p>
+        Creo que los buenos dashboards no solo muestran datos — guían a
+        las personas hacia las preguntas correctas. Cada proyecto que desarrollo
+        empieza entendiendo el problema de negocio antes de abrir Power BI.
+      </p>
+      <p>
+        Actualmente busco oportunidades donde pueda aportar análisis de datos
+        con impacto real, ya sea en finanzas, retail, RRHH o cualquier sector
+        que valore las decisiones basadas en evidencia.
+      </p>
+    </div>
+    <div class="about-details reveal">
+      <!-- ✏️ CAMBIA: tus datos reales -->
+      <div class="detail-row">
+        <span class="detail-label">Ubicación</span>
+        <span class="detail-val">Ciudad de Guatemala, Guatemala</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Disponibilidad</span>
+        <span class="detail-val">Abierto a oportunidades — tiempo completo o freelance</span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">LinkedIn</span>
+        <span class="detail-val"><a href="https://linkedin.com/in/tu-perfil" target="_blank">linkedin.com/in/tu-perfil</a></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Portafolio NovyPro</span>
+        <span class="detail-val"><a href="https://novypro.com/profile/tu-nombre" target="_blank">novypro.com/profile/tu-nombre</a></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">GitHub</span>
+        <span class="detail-val"><a href="https://github.com/tu-usuario" target="_blank">github.com/tu-usuario</a></span>
+      </div>
+      <div class="detail-row">
+        <span class="detail-label">Email</span>
+        <span class="detail-val"><a href="mailto:tu@email.com">tu@email.com</a></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Contacto ──────────────────────────────────────────────────── -->
+<section id="contacto" class="contact reveal">
+  <h2>¿Hablamos de<br/><em>tus datos?</em></h2>
+  <p>Estoy disponible para proyectos freelance, colaboraciones y posiciones full-time. No dudes en escribirme.</p>
+  <!-- ✏️ CAMBIA: tu email -->
+  <a href="mailto:tu@email.com" class="btn btn-primary" style="font-size:0.85rem; padding:1rem 2.5rem;">
+    Enviar mensaje
+  </a>
+</section>
+
+<!-- ── Footer ────────────────────────────────────────────────────── -->
+<footer>
+  <!-- ✏️ CAMBIA: tu nombre -->
+  <p>© 2025 Tu Nombre — Analista de Datos</p>
+  <p>Hecho con Power BI &amp; GitHub Pages</p>
+</footer>
+
+<!-- ── Scroll reveal ─────────────────────────────────────────────── -->
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.08 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+</script>
+
+</body>
+</html>
